@@ -2,6 +2,20 @@ import argparse
 from slack_sdk.web import WebClient
 
 
+class Slack:
+    def __init__(self, token):
+        self.client = WebClient(token=token)
+
+    def print(self, text: str):
+        response = self.client.conversations_list()
+        bot_channels = response.data["channels"]
+        for channel in bot_channels:
+            if not channel["is_member"]:
+                continue
+            self.client.chat_postMessage(
+                channel=channel["id"], text=text)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("token")
